@@ -159,7 +159,17 @@ document.getElementById('inquiry').addEventListener('submit',async e=>{
  data.set('event_type',selectedEventType||customEvents.join(', '));
  data.set('custom_quote_event',customEvents.join(', '));
  data.set('venue',String(data.get('venue')||'').trim()||'Venue not yet determined');
- data.set('music_genres',data.getAll('music_genres').join(', '));
+  // Keep the selected genres and every free-text answer in the submitted payload.
+  // These names exactly match the Cloudflare email handler.
+  data.set('music_genres', [...form.querySelectorAll('input[name="music_genres"]:checked')]
+    .map(input => input.value).join(', '));
+  for (const field of ['music_other','mc_requested','must_play','do_not_play',
+                       'details','booth_theme','booth_backdrop','booth_requests',
+                       'contact_preference','referral_source','gallery_visibility']) {
+    const control = form.elements.namedItem(field);
+    if (control && !control.disabled) data.set(field, String(control.value || ''));
+  }
+
  if(data.get('end_time')===data.get('start_time')){
   note.textContent='Start and end times cannot be the same. For a full 24-hour event, please describe the schedule in Additional Details and choose a different end time.';
   return;

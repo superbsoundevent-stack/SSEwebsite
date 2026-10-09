@@ -68,16 +68,16 @@ export async function onRequestPost(context) {
   const regularPrice = base === undefined ? 'Custom quote' : money(base);
   const discountAmount = base === undefined ? 'Subject to quote' : money(saving);
   const promotionStatus = promoActive ? 'Potentially eligible — signed contract and 50% retainer must be received by October 31, 2026' : 'Expired';
-  const notes = pick(d,"details","message","notes","event-details","event_details");
+  const notes = pick(d,"details","additional_details","additional-details","message","notes","event-details","event_details");
   const brand = pick(d,"brand");
   const start = pick(d,"start_time");
   const end = pick(d,"end_time");
   const contact = pick(d,"contact_preference");
-  const music = pick(d,"music_genres","music_genre","genres");
+  const music = pick(d,"music_genres","music_genre","music-genres","genres");
   const musicOther = pick(d,"music_other");
   const mc = pick(d,"mc_requested");
-  const mustPlay = pick(d,"must_play");
-  const doNotPlay = pick(d,"do_not_play");
+  const mustPlay = pick(d,"must_play","must-play","must_play_songs");
+  const doNotPlay = pick(d,"do_not_play","do-not-play","do_not_play_artists","do_not_play_songs");
   const boothStart = pick(d,"booth_start_time");
   const boothEnd = pick(d,"booth_end_time");
   const boothTheme = pick(d,"booth_theme");
@@ -129,7 +129,8 @@ export async function onRequestPost(context) {
       ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Website Launch Special 2026" : "Promotion expired"],["Promotion Status",promotionStatus]])}
       ${section("DJ Music & Entertainment Preferences",[["Music Genres Selected",music],["Other Music Styles / Artists",musicOther],["MC / Announcements",mc],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay]])}
       ${section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]])}
-      ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
+       ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
+       ${section("DJ Request Checklist",[["Selected Music Genres",music],["Other Genres / Artists",musicOther],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay],["Additional Details",notes]])}
       ${section("Complete Customer Responses (All Submitted Fields)",submittedAnswers)}
       ${section("Estimate",[["Regular Package Price",regularPrice],["Potential Promotional Savings",discountAmount],["Estimated Discounted Total",total],["Estimated Retainer",retainer],["Estimated Balance",balance]])}
       <h2 style="color:#a47b25;margin:28px 0 10px">Customer Message</h2>

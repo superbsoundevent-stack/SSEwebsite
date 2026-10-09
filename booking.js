@@ -124,7 +124,12 @@ export async function onRequestPost(context) {
     subject:`NEW ${brand === "—" ? "BOOKING" : brand} INQUIRY | ${name} | ${date}`,
     html
   };
-  if (email !== "—") payload.reply_to = email;
+  // Route Gmail's Reply button to the customer, not the automated sender.
+  // Resend uses reply_to to set the Reply-To email header.
+  const customerReplyAddress = email.trim();
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerReplyAddress)) {
+    payload.reply_to = customerReplyAddress;
+  }
 
   const response = await fetch("https://api.resend.com/emails", {
     method:"POST",

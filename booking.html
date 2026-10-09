@@ -57,7 +57,11 @@ form .full-width-booking-panel p,form .full-width-booking-panel small,form .full
 .native-picker-source{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important}
 @media(max-width:400px){.mobile-picker{gap:5px}.mobile-picker select{font-size:16px;padding:11px 3px}}
 
-/* Clearly visible live launch-special pricing breakdown */
+/* One clear AM/PM time dropdown for event and photo booth times */
+ .mobile-picker.single-time-picker{grid-template-columns:minmax(0,1fr)}
+ .mobile-picker.single-time-picker select{width:100%;padding:13px 12px}
+
+ /* Clearly visible live launch-special pricing breakdown */
 .launch-price-card{grid-column:1/-1;background:linear-gradient(145deg,#17130c,#080808);border:2px solid #d6b15d;border-radius:14px;padding:20px;margin:12px 0;color:#fff;box-shadow:0 8px 24px #0004}
 .launch-price-card h3{color:#f2c96e;margin:0 0 6px;font-size:1.35rem}
 .launch-price-card .launch-price-sub{margin:0 0 15px;color:#ddd}
@@ -276,19 +280,20 @@ service.addEventListener('change',update);brand.addEventListener('change',()=>se
  }
  [month,day,year].forEach(x=>x.addEventListener('change',syncDate));
  const timeInputs=[...document.querySelectorAll('input[name="start_time"],input[name="end_time"],input[name="booth_start_time"],input[name="booth_end_time"]')];
- timeInputs.forEach(input=>{
-  const host=pickerHost(input);
-  const hour=dropdown('Hour',Array.from({length:12},(_,i)=>[String(i+1),String(i+1)]));
-  const minute=dropdown('Minute',Array.from({length:12},(_,i)=>[String(i*5).padStart(2,'0'),String(i*5).padStart(2,'0')]));
-  const ampm=dropdown('AM / PM',[['AM','AM'],['PM','PM']]);
-  host.append(hour,minute,ampm);
-  function sync(){
-   if(!hour.value||!minute.value||!ampm.value){input.value='';return;}
-   let h=Number(hour.value)%12;if(ampm.value==='PM')h+=12;
-   input.value=String(h).padStart(2,'0')+':'+minute.value;
-  }
-  [hour,minute,ampm].forEach(el=>el.addEventListener('change',sync));
- });
+  timeInputs.forEach(input=>{
+   const host=pickerHost(input);
+   host.classList.add('single-time-picker');
+   const timeSelect=dropdown('Select time (AM/PM)',Array.from({length:288},(_,i)=>{
+    const h24=Math.floor(i/12),m=(i%12)*5;
+    const period=h24<12?'AM':'PM';
+    const h12=h24%12||12;
+    const mm=String(m).padStart(2,'0');
+    return [String(h24).padStart(2,'0')+':'+mm,`${h12}:${mm} ${period}`];
+   }));
+   timeSelect.setAttribute('aria-label',input.name.replace(/_/g,' ')+' (AM/PM)');
+   host.append(timeSelect);
+   timeSelect.addEventListener('change',()=>{input.value=timeSelect.value;});
+  });
  const form=document.getElementById('inquiry');
  form.addEventListener('submit',function(e){
   const required=[['date','event date'],['start_time','event start time'],['end_time','event end time']];

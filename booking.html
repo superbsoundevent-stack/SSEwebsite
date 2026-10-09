@@ -153,6 +153,12 @@ document.getElementById('inquiry').addEventListener('submit',async e=>{
  const note=document.getElementById('formnote');
  const button=form.querySelector('button[type="submit"]');
  const data=new FormData(form);
+ // Always send the customer's selected event type using a canonical key.
+ const selectedEventType=String(form.querySelector('select[name="type"]')?.value||'').trim();
+ const customEvents=[...form.querySelectorAll('input[name="custom_quote_event"]:checked')].map(el=>el.value);
+ data.set('event_type',selectedEventType||customEvents.join(', '));
+ data.set('custom_quote_event',customEvents.join(', '));
+ data.set('venue',String(data.get('venue')||'').trim()||'Venue not yet determined');
  data.set('music_genres',data.getAll('music_genres').join(', '));
  if(data.get('end_time')===data.get('start_time')){
   note.textContent='Start and end times cannot be the same. For a full 24-hour event, please describe the schedule in Additional Details and choose a different end time.';

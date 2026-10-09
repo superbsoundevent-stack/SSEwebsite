@@ -34,8 +34,12 @@ export async function onRequestPost(context) {
   const email = pick(d,"email");
   const phone = pick(d,"phone","phone-number");
   const date = pick(d,"event-date","event_date","date");
-  const type = pick(d,"event-type","event_type","type");
-  const venue = pick(d,"venue","venue-name");
+  // Accept both current and older form field names, including custom quote choices.
+  const customSelections = form.getAll("custom_quote_event").map(v=>String(v).trim()).filter(Boolean);
+  const typeFromSelect = pick(d,"event_type","event-type","type");
+  const type = typeFromSelect !== "—" ? typeFromSelect : (customSelections.join(", ") || "Not specified");
+  const venueInput = pick(d,"venue","venue-name");
+  const venue = venueInput === "—" ? "Venue not yet determined" : venueInput;
   const loc = pick(d,"city","event-city","location");
   const guests = pick(d,"guest-count","guest_count","guests");
   const service = pick(d,"service","service-type","service_type","services");
@@ -72,7 +76,7 @@ export async function onRequestPost(context) {
   const boothBackdrop = pick(d,"booth_backdrop");
   const boothRequests = pick(d,"booth_requests");
   const source = pick(d,"referral_source");
-  const customEvent = form.getAll("custom_quote_event").join(", ") || "—";
+  const customEvent = customSelections.join(", ") || "—";
   const isDJ = brand.includes("Superb Sound");
   const isBooth = brand.includes("Photo Booth") || service.startsWith("Love Over Board");
   const overnight = end !== "—" && start !== "—" && end < start ? "Yes — ends the following day" : "No";
@@ -90,9 +94,9 @@ export async function onRequestPost(context) {
     <div style="padding:24px">
       ${section("Client Information",[["Name",name],["Email",email],["Phone",phone],["Preferred Contact",contact],["How They Found Us",source]])}
       ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
-      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Website Launch Special 2026" : "Promotion expired"],["Promotion Status",promotionStatus]])
+      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Website Launch Special 2026" : "Promotion expired"],["Promotion Status",promotionStatus]])}
       ${isDJ ? section("DJ Music & Entertainment",[["Music Genres",music],["Other Music",musicOther],["MC / Announcements",mc],["Must-Play Songs",mustPlay],["Do-Not-Play Songs",doNotPlay]]) : ""}
-      ${isBooth ? section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]]) : ""}}
+      ${isBooth ? section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]]) : ""}
       ${section("Estimate",[["Regular Package Price",regularPrice],["Potential Promotional Savings",discountAmount],["Estimated Discounted Total",total],["Estimated Retainer",retainer],["Estimated Balance",balance]])}
       <h2 style="color:#a47b25;margin:28px 0 10px">Customer Message</h2>
       <div style="padding:14px;background:#faf7ef;border-left:4px solid #d5ad50;white-space:pre-wrap">${esc(notes)}</div>

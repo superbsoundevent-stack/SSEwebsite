@@ -141,10 +141,56 @@ export async function onRequestPost(context) {
   });
 
   const provider = await response.json().catch(() => ({}));
-  return Response.json(
-    { ok:response.ok, provider },
-    { status:response.ok ? 200 : 502 }
-  );
+  if (!response.ok) {
+    return Response.json({ ok:false, provider }, { status:502 });
+  }
+
+  // Send a separate customer acknowledgement only after the business inquiry succeeds.
+  // This is an inquiry receipt, not an availability confirmation or reservation.
+  const validCustomerEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  if (validCustomerEmail) {
+    const customerHtml = `<!doctype html><html><body style="margin:0;background:#f3f0e9;font-family:Arial,sans-serif;color:#171717">
+      <div style="max-width:640px;margin:24px auto;background:#fff;border:1px solid #d5ad50">
+        <div style="background:#080808;color:#d5ad50;text-align:center;padding:28px 18px">
+          <div style="font-size:23px;font-weight:800;letter-spacing:1px">SUPERB SOUND EVENT SERVICES</div>
+          <div style="color:#fff;margin-top:8px">SUPERB SOUND • UR PHOTO BOOTHS</div>
+        </div>
+        <div style="padding:26px 22px">
+          <h1 style="font-size:24px;margin:0 0 16px">Thank You for Your Inquiry!</h1>
+          <p>Hello ${esc(name === '—' ? 'there' : name)},</p>
+          <p>Thank you for considering Superb Sound Event Services and UR Photo Booths! We have received your inquiry and will review your event details before contacting you about availability and next steps.</p>
+          <h2 style="font-size:18px;color:#a47b25;margin-top:25px">Your Inquiry Summary</h2>
+          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Event Start",start],["Event End",end],["Venue",venue]])}
+          <p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The Website Launch Special requires a signed contract and the required 50% non-refundable retainer by October 31, 2026.</p>
+          <div style="background:#faf7ef;border-left:4px solid #d5ad50;padding:16px;margin:22px 0">
+            <strong>Important:</strong> This email confirms receipt of your inquiry only. Your event date is not reserved until availability is confirmed, your contract is signed, and the required retainer is received.
+          </div>
+          <p>Questions or changes? Simply reply to this email to reach us at <a href="mailto:superbsoundevent@gmail.com">superbsoundevent@gmail.com</a>.</p>
+          <p>We look forward to helping make your event memorable!</p>
+          <p><strong>Superb Sound Event Services &amp; UR Photo Booths</strong><br><a href="https://superbsoundevents.com">superbsoundevents.com</a></p>
+        </div>
+      </div></body></html>`;
+    try {
+      const confirmationResponse = await fetch("https://api.resend.com/emails", {
+        method:"POST",
+        headers:{ "Authorization":`Bearer ${key}`, "Content-Type":"application/json" },
+        body:JSON.stringify({
+          from,
+          to:[email.trim()],
+          reply_to:"superbsoundevent@gmail.com",
+          subject:"We Received Your Event Inquiry | Superb Sound Event Services",
+          html:customerHtml
+        })
+      });
+      if (!confirmationResponse.ok) {
+        console.error("Customer confirmation delivery failed", confirmationResponse.status);
+      }
+    } catch (error) {
+      console.error("Customer confirmation request failed", String(error));
+    }
+  }
+  // Do not fail the form submission if only the acknowledgement email fails.
+  return Response.json({ ok:true, provider }, { status:200 });
 }
 
 export function onRequestGet() {

@@ -127,8 +127,9 @@ export async function onRequestPost(context) {
       ${section("Client Information",[["Name",name],["Email",email],["Phone",phone],["Preferred Contact",contact],["How They Found Us",source]])}
       ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
       ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Website Launch Special 2026" : "Promotion expired"],["Promotion Status",promotionStatus]])}
-      ${isDJ ? section("DJ Music & Entertainment",[["Music Genres",music],["Other Music",musicOther],["MC / Announcements",mc],["Must-Play Songs",mustPlay],["Do-Not-Play Songs",doNotPlay]]) : ""}
-      ${isBooth ? section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]]) : ""}
+      ${section("DJ Music & Entertainment Preferences",[["Music Genres Selected",music],["Other Music Styles / Artists",musicOther],["MC / Announcements",mc],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay]])}
+      ${section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]])}
+      ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
       ${section("Complete Customer Responses (All Submitted Fields)",submittedAnswers)}
       ${section("Estimate",[["Regular Package Price",regularPrice],["Potential Promotional Savings",discountAmount],["Estimated Discounted Total",total],["Estimated Retainer",retainer],["Estimated Balance",balance]])}
       <h2 style="color:#a47b25;margin:28px 0 10px">Customer Message</h2>
@@ -174,8 +175,9 @@ export async function onRequestPost(context) {
   });
 
   const provider = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    return Response.json({ ok:false, provider }, { status:502 });
+  if (!response.ok || !provider.id) {
+    console.error("Business inquiry rejected by Resend", response.status, JSON.stringify(provider));
+    return Response.json({ ok:false, error:"The inquiry could not be delivered. Please try again." }, { status:502 });
   }
 
   // Send a separate customer acknowledgement only after the business inquiry succeeds.
@@ -229,6 +231,8 @@ export async function onRequestPost(context) {
       console.error(confirmationIssue, String(error));
     }
   }
+  // Keep the inquiry successful if the separate acknowledgement fails;
+  // do not prompt a duplicate booking submission. Check Cloudflare logs and Resend delivery logs.
   // Do not fail the form submission if only the acknowledgement email fails.
   // A successful API response means Resend accepted the message, not that it reached the inbox.
   // The inquiry remains successful even if the separate customer email fails.

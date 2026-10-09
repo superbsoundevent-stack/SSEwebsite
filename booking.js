@@ -22,8 +22,12 @@ const rows = (items) =>
 export async function onRequestPost(context) {
   const { request, env } = context;
   const form = await request.formData();
-  const d = Object.fromEntries(form.entries());
-  d.music_genres = form.getAll("music_genres").join(", ") || d.music_genres || "";
+  // Preserve every submitted answer, including multi-select checkboxes.
+  const d = {};
+  for (const key of new Set(form.keys())) {
+    const values = form.getAll(key).map(value => String(value).trim()).filter(Boolean);
+    d[key] = values.join(", ");
+  }
 
   // Honeypot: silently accept obvious bot submissions.
   if (String(d["bot-field"] || d["website"] || "").trim()) {
@@ -31,7 +35,11 @@ export async function onRequestPost(context) {
   }
 
   const name = pick(d,"name","full-name","full_name");
-  const email = pick(d,"email");
+  const email = pick(d,"email","email_address","customer_email").trim();
+  const validCustomerEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!validCustomerEmail) {
+    return Response.json({ok:false,error:"Please enter a valid customer email address."},{status:400});
+  }
   const phone = pick(d,"phone","phone-number");
   const date = pick(d,"event-date","event_date","date");
   // Accept both current and older form field names, including custom quote choices.
@@ -60,12 +68,12 @@ export async function onRequestPost(context) {
   const regularPrice = base === undefined ? 'Custom quote' : money(base);
   const discountAmount = base === undefined ? 'Subject to quote' : money(saving);
   const promotionStatus = promoActive ? 'Potentially eligible — signed contract and 50% retainer must be received by October 31, 2026' : 'Expired';
-  const notes = pick(d,"message","notes","event-details","event_details","details");
+  const notes = pick(d,"details","message","notes","event-details","event_details");
   const brand = pick(d,"brand");
   const start = pick(d,"start_time");
   const end = pick(d,"end_time");
   const contact = pick(d,"contact_preference");
-  const music = pick(d,"music_genres");
+  const music = pick(d,"music_genres","music_genre","genres");
   const musicOther = pick(d,"music_other");
   const mc = pick(d,"mc_requested");
   const mustPlay = pick(d,"must_play");
@@ -77,10 +85,34 @@ export async function onRequestPost(context) {
   const boothRequests = pick(d,"booth_requests");
   const source = pick(d,"referral_source");
   const customEvent = customSelections.join(", ") || "—";
-  const isDJ = brand.includes("Superb Sound");
+  const isDJ = brand.includes("Superb Sound") || service.startsWith("Love Over Board");
   const isBooth = brand.includes("Photo Booth") || service.startsWith("Love Over Board");
   const overnight = end !== "—" && start !== "—" && end < start ? "Yes — ends the following day" : "No";
   const boothOvernight = pick(d,"booth_overnight");
+
+  // Catch-all audit: every customer-entered form field is visible in the business email.
+  // Avoid showing anti-bot traps and internal hidden pricing/calculation fields twice.
+  const labels = {
+    brand:"Service Brand", service:"Selected Package", custom_quote_event:"Custom Quote Event",
+    type:"Event Type", date:"Event Date", start_time:"Event Start Time", end_time:"Event End Time",
+    guests:"Estimated Guest Count", city:"Event City", venue:"Venue / Event Address",
+    music_genres:"Music Genres", music_other:"Other Music Styles", mc_requested:"MC / Announcements",
+    must_play:"Must-Play Songs / Artists", do_not_play:"Do-Not-Play Songs / Artists",
+    booth_start_time:"Photo Booth Start Time", booth_end_time:"Photo Booth End Time",
+    booth_overnight:"Photo Booth Overnight", booth_theme:"Event Theme / Colors",
+    booth_backdrop:"Backdrop Preferences", booth_requests:"Photo Print / Booth Requests",
+    name:"Customer Name", email:"Customer Email", phone:"Customer Phone",
+    contact_preference:"Preferred Contact Method", referral_source:"How They Heard About Us",
+    details:"Additional Details / Customer Message", gallery_visibility:"Gallery Preference",
+    inquiry_acknowledgement:"Inquiry Terms Acknowledged",
+    promotion:"Promotion", promotion_status:"Promotion Status", standard_price:"Regular Price",
+    estimated_discount:"Estimated Discount", estimated_total:"Estimated Total",
+    estimated_retainer:"Estimated Retainer", estimated_balance:"Estimated Balance"
+  };
+  const exclude = new Set(["bot-field", "website", "csrf_token"]);
+  const submittedAnswers = Object.entries(d)
+    .filter(([key, value]) => !exclude.has(key) && String(value).trim())
+    .map(([key, value]) => [labels[key] || key.replace(/[_-]/g," ").replace(/\b\w/g, c => c.toUpperCase()), value]);
 
   const section = (title, r) =>
     `<h2 style="color:#a47b25;margin:28px 0 10px">${title}</h2>${rows(r)}`;
@@ -97,6 +129,7 @@ export async function onRequestPost(context) {
       ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Website Launch Special 2026" : "Promotion expired"],["Promotion Status",promotionStatus]])}
       ${isDJ ? section("DJ Music & Entertainment",[["Music Genres",music],["Other Music",musicOther],["MC / Announcements",mc],["Must-Play Songs",mustPlay],["Do-Not-Play Songs",doNotPlay]]) : ""}
       ${isBooth ? section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]]) : ""}
+      ${section("Complete Customer Responses (All Submitted Fields)",submittedAnswers)}
       ${section("Estimate",[["Regular Package Price",regularPrice],["Potential Promotional Savings",discountAmount],["Estimated Discounted Total",total],["Estimated Retainer",retainer],["Estimated Balance",balance]])}
       <h2 style="color:#a47b25;margin:28px 0 10px">Customer Message</h2>
       <div style="padding:14px;background:#faf7ef;border-left:4px solid #d5ad50;white-space:pre-wrap">${esc(notes)}</div>
@@ -147,7 +180,8 @@ export async function onRequestPost(context) {
 
   // Send a separate customer acknowledgement only after the business inquiry succeeds.
   // This is an inquiry receipt, not an availability confirmation or reservation.
-  const validCustomerEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  let confirmationAccepted = false;
+  let confirmationIssue = null;
   if (validCustomerEmail) {
     const customerHtml = `<!doctype html><html><body style="margin:0;background:#f3f0e9;font-family:Arial,sans-serif;color:#171717">
       <div style="max-width:640px;margin:24px auto;background:#fff;border:1px solid #d5ad50">
@@ -182,15 +216,28 @@ export async function onRequestPost(context) {
           html:customerHtml
         })
       });
-      if (!confirmationResponse.ok) {
-        console.error("Customer confirmation delivery failed", confirmationResponse.status);
+      const confirmationResult = await confirmationResponse.json().catch(() => ({}));
+      if (confirmationResponse.ok && confirmationResult.id) {
+        confirmationAccepted = true;
+        console.log("Customer confirmation accepted by Resend", confirmationResult.id);
+      } else {
+        confirmationIssue = `Resend rejected customer confirmation (HTTP ${confirmationResponse.status})`;
+        console.error(confirmationIssue, JSON.stringify(confirmationResult));
       }
     } catch (error) {
-      console.error("Customer confirmation request failed", String(error));
+      confirmationIssue = "Customer confirmation request failed";
+      console.error(confirmationIssue, String(error));
     }
   }
   // Do not fail the form submission if only the acknowledgement email fails.
-  return Response.json({ ok:true, provider }, { status:200 });
+  // A successful API response means Resend accepted the message, not that it reached the inbox.
+  // The inquiry remains successful even if the separate customer email fails.
+  return Response.json({
+    ok:true,
+    provider,
+    customer_confirmation_accepted:confirmationAccepted,
+    ...(confirmationIssue ? {warning:"Inquiry received, but customer confirmation email was not accepted. Check Cloudflare logs and Resend email logs."} : {})
+  }, { status:200 });
 }
 
 export function onRequestGet() {

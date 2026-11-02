@@ -68,16 +68,15 @@ export async function onRequestPost(context) {
   const chosen = pick(d,'service');
   const category = pick(d,'brand');
   const base = priceMap[chosen];
-  const localDate = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-  const promoActive = localDate <= '2026-10-31';
-  const saving = promoActive && base !== undefined ? (chosen === 'Love Over Board — $1,995' ? 200 : (category === 'Superb Sound Event Services' || category === 'UR Photo Booths' ? 100 : 0)) : 0;
+  const promoActive = true;
+  const saving = promoActive && base !== undefined ? (category === 'Superb Sound Event Services' || category === 'UR Photo Booths' ? 100 : 0) : 0;
   const money = n => '$' + n.toFixed(2);
   const total = base === undefined ? 'Custom quote' : money(base - saving);
   const retainer = base === undefined ? '50% of confirmed quote' : money((base - saving) / 2);
   const balance = retainer;
   const regularPrice = base === undefined ? 'Custom quote' : money(base);
   const discountAmount = base === undefined ? 'Subject to quote' : money(saving);
-  const promotionStatus = promoActive ? 'Potentially eligible — signed contract and 50% retainer must be received by October 31, 2026' : 'Expired';
+  const promotionStatus = promoActive ? 'Subject to availability confirmation, signed contract, and required 50% non-refundable retainer' : 'Expired';
   const notes = pick(d,"details","additional_details","additional-details","message","notes","event-details","event_details");
   const brand = pick(d,"brand");
   const startRaw = pick(d,"start_time");
@@ -139,7 +138,7 @@ export async function onRequestPost(context) {
     <div style="padding:24px">
       ${section("Client Information",[["Name",name],["Email",email],["Phone",phone],["Preferred Contact",contact],["How They Found Us",source]])}
       ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
-      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Website Launch Special 2026" : "Promotion expired"],["Promotion Status",promotionStatus]])}
+      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Package Special" : "Promotion expired"],["Promotion Status",promotionStatus]])}
       ${section("DJ Music & Entertainment Preferences",[["Music Genres Selected",music],["Other Music Styles / Artists",musicOther],["MC / Announcements",mc],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay]])}
       ${section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]])}
        ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
@@ -211,7 +210,7 @@ export async function onRequestPost(context) {
           <p>Thank you for considering Superb Sound Event Services and UR Photo Booths! We have received your inquiry and will review your event details before contacting you about availability and next steps.</p>
           <h2 style="font-size:18px;color:#a47b25;margin-top:25px">Your Inquiry Summary</h2>
           ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Event Start",start],["Event End",end],["Venue",venue]])}
-          <p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The Website Launch Special requires a signed contract and the required 50% non-refundable retainer by October 31, 2026.</p>
+          <p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The Package Special offers $100 off any package, subject to availability confirmation, a signed contract, and the required 50% non-refundable retainer.</p>
           <div style="background:#faf7ef;border-left:4px solid #d5ad50;padding:16px;margin:22px 0">
             <strong>Important:</strong> This email confirms receipt of your inquiry only. Your event date is not reserved until availability is confirmed, your contract is signed, and the required retainer is received.
           </div>

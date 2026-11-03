@@ -120,7 +120,7 @@ export async function onRequestPost(context) {
   // Catch-all audit: every customer-entered form field is visible in the business email.
   // Avoid showing anti-bot traps and internal hidden pricing/calculation fields twice.
   const labels = {
-    brand:"Service Brand", service:"Selected Package", custom_quote_event:"Custom Quote Event",
+    brand:"Service Brand", service:"Selected Package", addons_requested:"Optional Add-Ons Requested", custom_quote_event:"Custom Quote Event",
     type:"Event Type", date:"Event Date", start_time:"Event Start Time", end_time:"Event End Time",
     guests:"Estimated Guest Count", city:"Event City", venue:"Venue / Event Address",
     music_genres:"Music Genres", music_other:"Other Music Styles", mc_requested:"MC / Announcements",
@@ -154,7 +154,7 @@ export async function onRequestPost(context) {
     <div style="padding:24px">
       ${section("Client Information",[["Name",name],["Email",email],["Phone",phone],["Preferred Contact",contact],["How They Found Us",source]])}
       ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
-      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",eligible ? "2026 Year-End Booking Special" : (promoActive ? "Custom quote" : "2026 promotion expired")],["Promotion Status",promotionStatus]])}
+      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Optional Add-Ons — Quote Requested",form.get("addons_requested") || "None"],["Custom Quote Event Type",customEvent],["Promotion",eligible ? "2026 Year-End Booking Special" : (promoActive ? "Custom quote" : "2026 promotion expired")],["Promotion Status",promotionStatus]])}
       ${section("DJ Music & Entertainment Preferences",[["Music Genres Selected",music],["Other Music Styles / Artists",musicOther],["MC / Announcements",mc],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay]])}
       ${section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]])}
        ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
@@ -225,8 +225,8 @@ export async function onRequestPost(context) {
           <p>Hello ${esc(name === '—' ? 'there' : name)},</p>
           <p>Thank you for considering Superb Sound Event Services and UR Photo Booths! We have received your inquiry and will review your event details before contacting you about availability and next steps.</p>
           <h2 style="font-size:18px;color:#a47b25;margin-top:25px">Your Inquiry Summary</h2>
-          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Estimated Package Total",total],["Estimated 50% Retainer",retainer],["Promotion Status",promotionStatus],["Event Start",start],["Event End",end],["Venue",venue]])}
-          <p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The 2026 Year-End Booking Specials apply only to eligible packages when the signed contract and required 50% non-refundable retainer are received by December 31, 2026, subject to availability. Rates are not guaranteed by an inquiry alone. New quotes apply beginning January 1, 2027.</p>
+          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Additional Services Requested (quoted separately)",form.get("addons_requested") || "None"],["Estimated Package Total (excluding add-ons)",total],["Estimated 50% Retainer",retainer],["Promotion Status",promotionStatus],["Event Start",start],["Event End",end],["Venue",venue]])}
+          <p style="font-size:13px;color:#555">Additional services are requests for a personalized quote and are not included in the displayed package estimate or retainer.</p><p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The 2026 Year-End Booking Specials apply only to eligible packages when the signed contract and required 50% non-refundable retainer are received by December 31, 2026, subject to availability. Rates are not guaranteed by an inquiry alone. New quotes apply beginning January 1, 2027.</p>
           <div style="background:#faf7ef;border-left:4px solid #d5ad50;padding:16px;margin:22px 0">
             <strong>Important:</strong> This email confirms receipt of your inquiry only. Your event date is not reserved until availability is confirmed, your contract is signed, and the required retainer is received.
           </div>

@@ -68,8 +68,8 @@ export async function onRequestPost(context) {
   const yearEndPrices = {
     'Mini Celebration DJ':450, 'Essential DJ':650, 'Classic DJ':850,
     'Extended Celebration DJ':1050, 'Wedding Reception DJ':1195,
-    'Classic Celebration Combo':1095, 'Wedding Celebration Combo':1395,
-    'Signature Wedding Experience':1695,
+    'The Classic Man':1095, 'Put a Little Umph in It':1395,
+    'Give You All of Me':1695,
     'Classic Photo Booth':350, 'Celebration Photo Booth':450,
     'Deluxe Photo Booth':525
   };

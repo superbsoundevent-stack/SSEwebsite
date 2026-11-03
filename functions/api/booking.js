@@ -68,7 +68,7 @@ export async function onRequestPost(context) {
   const yearEndPrices = {
     'Essential DJ':750, 'Classic DJ':900,
     'Wedding Reception DJ':1050,
-    'The Classic Man':1195, 'Put a Little Umph in It':1395,
+    'The Classic Man':1095, 'Put a Little Umph in It':1395,
     'Give You All of Me':1795,
     'Classic Photo Booth':400, 'Celebration Photo Booth':500,
     'Deluxe Photo Booth':700

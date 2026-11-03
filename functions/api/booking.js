@@ -64,19 +64,35 @@ export async function onRequestPost(context) {
   const pkg = pick(d,"package","package-name","package_name");
   const gallery = pick(d,"gallery-preference","gallery_preference","gallery_visibility");
   const promo = pick(d,"promotion");
-  const priceMap = {'Put a Ring On It — $550':550,"Let's Get It Started — $950":950,'Love On Top — $1,395':1395,'Love Over Board — $1,995':1995,'Photo booth — 2 hours':400,'Photo booth — 3 hours':500,'Photo booth — 4 hours':600};
+  // Authoritative server-side pricing. Do not trust prices sent by the browser.
+  const yearEndPrices = {
+    'Mini Celebration DJ':450, 'Essential DJ':650, 'Classic DJ':850,
+    'Extended Celebration DJ':1050, 'Wedding Reception DJ':1195,
+    'Classic Celebration Combo':1095, 'Wedding Celebration Combo':1395,
+    'Signature Wedding Experience':1695,
+    'Classic Photo Booth':350, 'Celebration Photo Booth':450,
+    'Deluxe Photo Booth':525
+  };
+  const standardPrices = {
+    'Classic Photo Booth':400, 'Celebration Photo Booth':500,
+    'Deluxe Photo Booth':600
+  };
   const chosen = pick(d,'service');
-  const category = pick(d,'brand');
-  const base = priceMap[chosen];
-  const promoActive = true;
-  const saving = promoActive && base !== undefined ? (category === 'Superb Sound Event Services' || category === 'UR Photo Booths' ? 100 : 0) : 0;
+  // December 31 at 11:59:59 PM CST = January 1, 2027 at 06:00 UTC.
+  const promoActive = Date.now() < Date.parse('2027-01-01T06:00:00Z');
+  const eligible = promoActive && Object.prototype.hasOwnProperty.call(yearEndPrices,chosen);
+  const special = eligible ? yearEndPrices[chosen] : undefined;
+  const base = eligible ? (standardPrices[chosen] ?? special) : undefined;
+  const saving = eligible ? Math.max(0,base-special) : 0;
   const money = n => '$' + n.toFixed(2);
-  const total = base === undefined ? 'Custom quote' : money(base - saving);
-  const retainer = base === undefined ? '50% of confirmed quote' : money((base - saving) / 2);
+  const total = eligible ? money(special) : 'Custom quote';
+  const retainer = eligible ? money(special/2) : '50% of confirmed quote';
   const balance = retainer;
-  const regularPrice = base === undefined ? 'Custom quote' : money(base);
-  const discountAmount = base === undefined ? 'Subject to quote' : money(saving);
-  const promotionStatus = promoActive ? 'Subject to availability confirmation, signed contract, and required 50% non-refundable retainer' : 'Expired';
+  const regularPrice = eligible ? money(base) : 'Custom quote';
+  const discountAmount = eligible ? money(saving) : 'Subject to quote';
+  const promotionStatus = eligible
+    ? '2026 Year-End Booking Special — signed contract and 50% non-refundable retainer required by December 31, 2026; subject to availability'
+    : promoActive ? 'Custom quote — no published year-end package price' : '2026 promotion expired — updated quote required';
   const notes = pick(d,"details","additional_details","additional-details","message","notes","event-details","event_details");
   const brand = pick(d,"brand");
   const startRaw = pick(d,"start_time");
@@ -138,7 +154,7 @@ export async function onRequestPost(context) {
     <div style="padding:24px">
       ${section("Client Information",[["Name",name],["Email",email],["Phone",phone],["Preferred Contact",contact],["How They Found Us",source]])}
       ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
-      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",promoActive ? "Package Special" : "Promotion expired"],["Promotion Status",promotionStatus]])}
+      ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Custom Quote Event Type",customEvent],["Promotion",eligible ? "2026 Year-End Booking Special" : (promoActive ? "Custom quote" : "2026 promotion expired")],["Promotion Status",promotionStatus]])}
       ${section("DJ Music & Entertainment Preferences",[["Music Genres Selected",music],["Other Music Styles / Artists",musicOther],["MC / Announcements",mc],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay]])}
       ${section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]])}
        ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
@@ -209,8 +225,8 @@ export async function onRequestPost(context) {
           <p>Hello ${esc(name === '—' ? 'there' : name)},</p>
           <p>Thank you for considering Superb Sound Event Services and UR Photo Booths! We have received your inquiry and will review your event details before contacting you about availability and next steps.</p>
           <h2 style="font-size:18px;color:#a47b25;margin-top:25px">Your Inquiry Summary</h2>
-          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Event Start",start],["Event End",end],["Venue",venue]])}
-          <p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The Package Special offers $100 off any package, subject to availability confirmation, a signed contract, and the required 50% non-refundable retainer.</p>
+          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Estimated Package Total",total],["Estimated 50% Retainer",retainer],["Promotion Status",promotionStatus],["Event Start",start],["Event End",end],["Venue",venue]])}
+          <p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The 2026 Year-End Booking Specials apply only to eligible packages when the signed contract and required 50% non-refundable retainer are received by December 31, 2026, subject to availability. Rates are not guaranteed by an inquiry alone. New quotes apply beginning January 1, 2027.</p>
           <div style="background:#faf7ef;border-left:4px solid #d5ad50;padding:16px;margin:22px 0">
             <strong>Important:</strong> This email confirms receipt of your inquiry only. Your event date is not reserved until availability is confirmed, your contract is signed, and the required retainer is received.
           </div>

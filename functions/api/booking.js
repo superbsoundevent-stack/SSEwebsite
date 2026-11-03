@@ -66,16 +66,16 @@ export async function onRequestPost(context) {
   const promo = pick(d,"promotion");
   // Authoritative server-side pricing. Do not trust prices sent by the browser.
   const yearEndPrices = {
-    'Mini Celebration DJ':450, 'Essential DJ':650, 'Classic DJ':850,
+    'Essential DJ':750, 'Classic DJ':900,
     'Wedding Reception DJ':1050,
     'The Classic Man':1195, 'Put a Little Umph in It':1395,
-    'Give You All of Me':1695,
-    'Classic Photo Booth':350, 'Celebration Photo Booth':450,
-    'Deluxe Photo Booth':525
+    'Give You All of Me':1795,
+    'Classic Photo Booth':400, 'Celebration Photo Booth':500,
+    'Deluxe Photo Booth':700
   };
   const standardPrices = {
-    'Classic Photo Booth':400, 'Celebration Photo Booth':500,
-    'Deluxe Photo Booth':600
+    'Classic Photo Booth':500, 'Celebration Photo Booth':600,
+    'Deluxe Photo Booth':800
   };
   const chosen = pick(d,'service');
   // December 31 at 11:59:59 PM CST = January 1, 2027 at 06:00 UTC.

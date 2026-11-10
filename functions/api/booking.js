@@ -86,19 +86,29 @@ export async function onRequestPost(context) {
   const saving = eligible ? Math.max(0,base-special) : 0;
   const money = n => '$' + n.toFixed(2);
   const total = eligible ? money(special) : 'Custom quote';
-  const retainer = eligible ? money(special/2) : '50% of confirmed quote';
-  const balance = retainer;
+  const today = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(new Date());
+  const daysUntilEvent = (Date.parse(date) - Date.parse(today)) / 86400000;
+  const fullPayment = daysUntilEvent >= 0 && daysUntilEvent <= 30;
+  const dueLabel = fullPayment ? 'Estimated Full Amount Due at Confirmation' : 'Estimated 50% Retainer';
+  const amountDue = eligible ? money(fullPayment ? special : special / 2)
+    : fullPayment ? 'Full confirmed quote' : '50% of confirmed quote';
+  const balance = fullPayment ? money(0) : amountDue;
   const regularPrice = eligible ? money(base) : 'Custom quote';
   const discountAmount = eligible ? money(saving) : 'Subject to quote';
   const promotionStatus = eligible
-    ? '2026 Year-End Booking Special — signed contract and 50% non-refundable retainer required by December 31, 2026; subject to availability'
+    ? '2026 Year-End Booking Special — signed contract and required payment required by December 31, 2026; subject to availability'
     : promoActive ? 'Custom quote — no published year-end package price' : '2026 promotion expired — updated quote required';
   const notes = pick(d,"details","additional_details","additional-details","message","notes","event-details","event_details");
   const brand = pick(d,"brand");
   const startRaw = pick(d,"start_time");
   const start = formatTime(startRaw);
   const endRaw = pick(d,"end_time");
+  const endDate = pick(d,"end_date");
   const end = formatTime(endRaw);
+  const endsNextDay = endDate !== "—" ? endDate > date : endRaw < startRaw;
+  const endDateDisplay = endDate !== "—" ? endDate : endsNextDay ? "Following day" : date;
   const contact = pick(d,"contact_preference");
   const music = pick(d,"music_genres","music_genre","music-genres","genres");
   const musicOther = pick(d,"music_other");
@@ -114,7 +124,7 @@ export async function onRequestPost(context) {
   const customEvent = customSelections.join(", ") || "—";
   const isDJ = brand.includes("Superb Sound") || service.startsWith("Love Over Board");
   const isBooth = brand.includes("Photo Booth") || service.startsWith("Love Over Board");
-  const overnight = end !== "—" && start !== "—" && endRaw < startRaw ? "Yes — ends the following day" : "No";
+  const overnight = end !== "—" && start !== "—" && endsNextDay ? "Yes — ends the following day" : "No";
   const boothOvernight = pick(d,"booth_overnight");
 
   // Catch-all audit: every customer-entered form field is visible in the business email.
@@ -153,14 +163,14 @@ export async function onRequestPost(context) {
     </div>
     <div style="padding:24px">
       ${section("Client Information",[["Name",name],["Email",email],["Phone",phone],["Preferred Contact",contact],["How They Found Us",source]])}
-      ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
+      ${section("Event Information",[["Event Date",date],["Event Type",type],["Event Start",start],["Event End Date",endDateDisplay],["Event End",end],["Overnight Event",overnight],["Venue / Address",venue],["City / Location",loc],["Guest Count",guests]])}
       ${section("Services Requested",[["Service Category",brand],["Selected Package",service],["Optional Add-Ons — Quote Requested",form.get("addons_requested") || "None"],["Custom Quote Event Type",customEvent],["Promotion",eligible ? "2026 Year-End Booking Special" : (promoActive ? "Custom quote" : "2026 promotion expired")],["Promotion Status",promotionStatus]])}
       ${section("DJ Music & Entertainment Preferences",[["Music Genres Selected",music],["Other Music Styles / Artists",musicOther],["MC / Announcements",mc],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay]])}
       ${section("Photo Booth Preferences",[["Booth Start",boothStart],["Booth End",boothEnd],["Booth Overnight",boothOvernight],["Theme / Colors",boothTheme],["Backdrop",boothBackdrop],["Print & Booth Requests",boothRequests],["Gallery Preference",gallery]])}
        ${section("Customer Message & Special Requests",[["Customer's Full Message",notes]])}
        ${section("DJ Request Checklist",[["Selected Music Genres",music],["Other Genres / Artists",musicOther],["Must-Play Songs / Artists",mustPlay],["Do-Not-Play Songs / Artists",doNotPlay],["Additional Details",notes]])}
       ${section("Complete Customer Responses (All Submitted Fields)",submittedAnswers)}
-      ${section("Estimate",[["Regular Package Price",regularPrice],["Potential Promotional Savings",discountAmount],["Estimated Discounted Total",total],["Estimated Retainer",retainer],["Estimated Balance",balance]])}
+      ${section("Estimate",[["Regular Package Price",regularPrice],["Potential Promotional Savings",discountAmount],["Estimated Discounted Total",total],[dueLabel,amountDue],["Estimated Balance",balance]])}
       <h2 style="color:#a47b25;margin:28px 0 10px">Customer Message</h2>
       <div style="padding:14px;background:#faf7ef;border-left:4px solid #d5ad50;white-space:pre-wrap">${esc(notes)}</div>
       <div style="margin-top:28px;padding:16px;background:#111;color:#fff;text-align:center">
@@ -225,8 +235,8 @@ export async function onRequestPost(context) {
           <p>Hello ${esc(name === '—' ? 'there' : name)},</p>
           <p>Thank you for considering Superb Sound Event Services and UR Photo Booths! We have received your inquiry and will review your event details before contacting you about availability and next steps.</p>
           <h2 style="font-size:18px;color:#a47b25;margin-top:25px">Your Inquiry Summary</h2>
-          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Additional Services Requested (quoted separately)",form.get("addons_requested") || "None"],["Estimated Package Total (excluding add-ons)",total],["Estimated 50% Retainer",retainer],["Promotion Status",promotionStatus],["Event Start",start],["Event End",end],["Venue",venue]])}
-          <p style="font-size:13px;color:#555">Additional services are requests for a personalized quote and are not included in the displayed package estimate or retainer.</p><p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The 2026 Year-End Booking Specials apply only to eligible packages when the signed contract and required 50% non-refundable retainer are received by December 31, 2026, subject to availability. Rates are not guaranteed by an inquiry alone. New quotes apply beginning January 1, 2027.</p>
+          ${rows([["Event Type",type],["Event Date",date],["Requested Service",brand],["Selected Package",service],["Additional Services Requested (quoted separately)",form.get("addons_requested") || "None"],["Estimated Package Total (excluding add-ons)",total],[dueLabel,amountDue],["Estimated Balance",balance],["Promotion Status",promotionStatus],["Event Start",start],["Event End Date",endDateDisplay],["Event End",end],["Venue",venue]])}
+          <p style="font-size:13px;color:#555">Additional services are requests for a personalized quote and are not included in the displayed package estimate or retainer.</p><p style="font-size:13px;color:#555">Any promotional pricing is subject to eligibility and confirmation. The 2026 Year-End Booking Specials apply only to eligible packages when the signed contract and required payment are received by December 31, 2026, subject to availability. Rates are not guaranteed by an inquiry alone. New quotes apply beginning January 1, 2027.</p>
           <div style="background:#faf7ef;border-left:4px solid #d5ad50;padding:16px;margin:22px 0">
             <strong>Important:</strong> This email confirms receipt of your inquiry only. Your event date is not reserved until availability is confirmed, your contract is signed, and the required retainer is received.
           </div>

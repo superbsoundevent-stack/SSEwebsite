@@ -59,7 +59,7 @@ form .full-width-booking-panel p,form .full-width-booking-panel small,form .full
 .enhanced-panel{grid-column:1/-1;border:1px solid #ad873f;border-radius:12px;padding:18px;background:#161318;margin:8px 0 14px}.enhanced-panel h3{color:#e6bb60;margin:0 0 7px}.enhanced-panel p{color:#ded6c9;margin:0 0 13px}.enhanced-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.enhanced-options label{display:flex;align-items:center;gap:8px;padding:9px;background:#242027;border:1px solid #66512e;border-radius:7px;font-size:.93rem}.enhanced-options input{width:auto;flex-shrink:0}.enhanced-panel .enhanced-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.enhanced-panel .enhanced-fields label{display:block}.enhanced-panel input[type=text],.enhanced-panel input[type=time],.enhanced-panel textarea,.enhanced-panel select{width:100%;max-width:100%;box-sizing:border-box;margin-top:5px}.enhanced-panel[hidden]{display:none!important}@media(max-width:650px){.enhanced-options,.enhanced-panel .enhanced-fields{grid-template-columns:1fr}}
 </style><style>
 /* Android-friendly, scrollable date and time dropdowns */
-.mobile-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:7px;width:100%}
+.mobile-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px;width:100%}
 .mobile-picker select{display:block;width:100%;min-width:0;max-width:100%;padding:13px 7px;font-size:16px;line-height:1.4;min-height:48px;background:#0b0a0e;color:#fff;border:1px solid #98733c;border-radius:7px;touch-action:manipulation}
 .mobile-picker select:focus{outline:2px solid #e4b74d}
 .mobile-picker select option{background:#17141a;color:white}
@@ -97,12 +97,13 @@ form .full-width-booking-panel p,form .full-width-booking-panel small,form .full
 <input id="estimated-deposit" name="estimated_retainer" type="hidden"/>
 <input id="estimated-balance" name="estimated_balance" type="hidden"/><div class="booking-intro"><strong>Step 1 · Choose your experience</strong><p>Select the brand and package you're interested in. We'll confirm availability and your final quote.</p></div>
 <label>Service Brand <select id="brand" name="brand" required=""><option value="">Choose a brand</option><option value="Superb Sound Event Services">Superb Sound Event Services</option><option value="UR Photo Booths">UR Photo Booths</option><option value="Both Superb Sound &amp; UR Photo Booths">Both — DJ &amp; Photo Booth</option></select></label>
-<label>Package <select id="service" name="service" required=""><option value="">Choose a brand first</option></select></label><section class="full" id="event-addons" style="grid-column:1/-1;border:1px solid #b58b3d;border-radius:12px;padding:20px;background:#211b17;min-width:0"><h3 style="color:#e4b74d;margin:0 0 8px">Optional Event Add-Ons</h3><p style="color:#e6d8c2;margin:0 0 14px">Choose any extras you'd like us to quote. You can select more than one.</p><label for="addon-choice">Additional service</label><div style="display:flex;gap:10px;flex-wrap:wrap"><select id="addon-choice" style="flex:1;min-width:190px"><option value="">Select an add-on</option><option value="Custom Monogram">Custom Monogram</option><option value="Dance Floor Lighting">Dance Floor Lighting</option><option value="Uplighting">Uplighting</option><option value="Extra Photo Booth Time">Extra Photo Booth Time — Request a Quote</option><option value="Extra DJ Time">Extra DJ Time — Request a Quote</option></select><button type="button" class="btn gold" id="addon-add">Add Service</button></div><div id="addon-items" aria-live="polite" style="margin-top:12px"></div><input type="hidden" id="addons-requested" name="addons_requested" value="None"/><p style="font-size:.82rem;color:#d3c2a5;margin:12px 0 0">All add-ons are available by personalized quote. Tell us how many additional hours you need. Add-ons are not included in the advertised package price or estimated retainer; we will confirm availability and your final quote before booking.</p></section><div aria-live="polite" class="retainer-estimate full-width-booking-panel" id="deposit-estimate" style="grid-column:1 / -1;width:100%;max-width:100%;min-width:0;margin-left:0;margin-right:0;box-sizing:border-box"><strong>Standard booking retainer: 50% of the total</strong><p id="promo-calculation" style="color:#f2c96e;font-weight:700">Select a package to see your 2026 year-end special rate.</p><p id="deposit-calculation">Select a package to view the estimated retainer and remaining balance.</p><small>2026 year-end special rates require a signed contract and 50% non-refundable retainer by December 31, 2026. All rates subject to availability, confirmation and final quote. Your inquiry does not reserve the date. After January 1, 2027, new bookings are quoted at updated rates.</small></div>
-<section aria-atomic="true" aria-live="polite" class="launch-price-card" hidden="" id="launch-price-card"><h3 id="launch-price-heading">2026 Year-End Package Estimate</h3><p class="launch-price-sub" id="launch-package-name"></p><div class="launch-price-row"><span>Regular package price</span><strong id="launch-regular"></strong></div><div class="launch-price-row savings"><span>Package savings</span><strong id="launch-savings"></strong></div><div class="launch-price-row total"><span>Estimated package total</span><strong id="launch-total"></strong></div><div class="launch-price-row"><span>Estimated 50% retainer</span><strong id="launch-retainer"></strong></div><div class="launch-price-row"><span>Estimated remaining balance</span><strong id="launch-balance"></strong></div><p class="launch-terms" id="launch-terms">To lock in a 2026 special, your signed contract and 50% non-refundable retainer must be received by December 31, 2026.</p></section><div class="booking-intro"><strong>Step 2 · Tell us about your event</strong></div>
+<label>Package <select id="service" name="service" required=""><option value="">Choose a brand first</option></select></label><section class="full" id="event-addons" style="grid-column:1/-1;border:1px solid #b58b3d;border-radius:12px;padding:20px;background:#211b17;min-width:0"><h3 style="color:#e4b74d;margin:0 0 8px">Optional Event Add-Ons</h3><p style="color:#e6d8c2;margin:0 0 14px">Choose any extras you'd like us to quote. You can select more than one.</p><label for="addon-choice">Additional service</label><div style="display:flex;gap:10px;flex-wrap:wrap"><select id="addon-choice" style="flex:1;min-width:190px"><option value="">Select an add-on</option><option value="Custom Monogram">Custom Monogram</option><option value="Dance Floor Lighting">Dance Floor Lighting</option><option value="Uplighting">Uplighting</option><option value="Extra Photo Booth Time">Extra Photo Booth Time — Request a Quote</option><option value="Extra DJ Time">Extra DJ Time — Request a Quote</option></select><button type="button" class="btn gold" id="addon-add">Add Service</button></div><div id="addon-items" aria-live="polite" style="margin-top:12px"></div><input type="hidden" id="addons-requested" name="addons_requested" value="None"/><p style="font-size:.82rem;color:#d3c2a5;margin:12px 0 0">All add-ons are available by personalized quote. Tell us how many additional hours you need. Add-ons are not included in the advertised package price or estimated retainer; we will confirm availability and your final quote before booking.</p></section><div aria-live="polite" class="retainer-estimate full-width-booking-panel" id="deposit-estimate" style="grid-column:1 / -1;width:100%;max-width:100%;min-width:0;margin-left:0;margin-right:0;box-sizing:border-box"><strong>Payment due at booking confirmation</strong><p id="promo-calculation" style="color:#f2c96e;font-weight:700">Select a package to see your 2026 year-end special rate.</p><p id="deposit-calculation">Select a package to view the estimated retainer and remaining balance.</p><small>2026 year-end special rates require a signed contract and required payment by December 31, 2026. All rates subject to availability, confirmation and final quote. Your inquiry does not reserve the date. After January 1, 2027, new bookings are quoted at updated rates.</small></div>
+<section aria-atomic="true" aria-live="polite" class="launch-price-card" hidden="" id="launch-price-card"><h3 id="launch-price-heading">2026 Year-End Package Estimate</h3><p class="launch-price-sub" id="launch-package-name"></p><div class="launch-price-row"><span>Regular package price</span><strong id="launch-regular"></strong></div><div class="launch-price-row savings"><span>Package savings</span><strong id="launch-savings"></strong></div><div class="launch-price-row total"><span>Estimated package total</span><strong id="launch-total"></strong></div><div class="launch-price-row"><span><span id="launch-due-label">Estimated 50% retainer</span></span><strong id="launch-retainer"></strong></div><div class="launch-price-row"><span>Estimated remaining balance</span><strong id="launch-balance"></strong></div><p class="launch-terms" id="launch-terms">To lock in a 2026 special, your signed contract and required payment must be received by December 31, 2026.</p></section><div class="booking-intro"><strong>Step 2 · Tell us about your event</strong></div>
 <div class="custom-dj-quote-panel" id="custom-dj-quote"><h3>Customized DJ Quote</h3><p>For events that do not fit one of our wedding packages, check the type of event you are planning. We will build a quote around your event details.</p><div class="custom-dj-quote-choices"><label><input name="custom_quote_event" type="checkbox" value="Birthday Party"/> Birthday Party</label><label><input name="custom_quote_event" type="checkbox" value="Private Party"/> Private Party</label><label><input name="custom_quote_event" type="checkbox" value="Corporate Event"/> Corporate Event</label><label><input name="custom_quote_event" type="checkbox" value="School Event"/> School Event</label><label><input name="custom_quote_event" type="checkbox" value="Quinceañera"/> Quinceañera</label><label><input name="custom_quote_event" type="checkbox" value="Family Reunion"/> Family Reunion</label></div></div><label>Event Type <select name="type" required=""><option value="">Choose event type</option><option>Wedding</option><option>Birthday / Private Party</option><option>School Event</option><option>Corporate Event</option><option>Graduation</option><option>Quinceañera</option><option>Family Reunion</option><option>Other</option></select></label>
 <label>Event Date <input id="event-date" name="date" type="hidden"/></label>
 <label>Event Start Time <input name="start_time" type="hidden"/></label>
-<label>Event End Time <input name="end_time" type="hidden"/><small style="display:block;margin-top:6px;line-height:1.5">For events ending after midnight, enter the time on the following day (for example, 1:00 AM).</small></label>
+<label>Event End Time <input name="end_time" type="hidden"/></label>
+<label>Event End Date <select id="event-end-day" aria-describedby="event-end-date-note"><option value="same">Same day</option><option value="next">Next day</option></select><small id="event-end-date-note" aria-live="polite"></small><input name="end_date" type="hidden"/></label>
 <label>Estimated Guest Count <input max="10000" min="1" name="guests" placeholder="e.g., 100" type="number"/></label>
 <label>Event City <input name="city" placeholder="e.g., Houston" required=""/></label>
 <label class="full">Venue / Event Address <input name="venue" placeholder="Venue name or location (if known)"/></label>
@@ -154,8 +155,13 @@ document.querySelectorAll('[data-service]').forEach(a=>a.addEventListener('click
  brand.value=value.toLowerCase().includes('photo booth')?'UR Photo Booths':'Superb Sound Event Services';
  refreshPackages(value);updateServicePreferences();
 }));
-const today=new Date();const localToday=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
-document.getElementById('event-date').min=localToday;
+function houstonToday() {
+ return new Intl.DateTimeFormat('sv-SE', {timeZone:'America/Chicago', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date());
+}
+function fullPaymentDue(date) {
+ const days = (Date.parse(date) - Date.parse(houstonToday())) / 86400000;
+ return days >= 0 && days <= 30;
+}
 document.getElementById('inquiry').addEventListener('submit',async e=>{
  e.preventDefault();
  const form=e.currentTarget;
@@ -179,11 +185,11 @@ document.getElementById('inquiry').addEventListener('submit',async e=>{
     if (control && !control.disabled) data.set(field, String(control.value || ''));
   }
 
- if(data.get('end_time')===data.get('start_time')){
-  note.textContent='Start and end times cannot be the same. For a full 24-hour event, please describe the schedule in Additional Details and choose a different end time.';
+ if(data.get('end_date')===data.get('date') && data.get('end_time')<=data.get('start_time')){
+  note.textContent='Choose an end time after the start time, or select Next day under Event End Date.';
   return;
  }
- if(data.get('end_time')<data.get('start_time')){
+ if(data.get('end_date')>data.get('date')){
   const originalDetails=String(data.get('details')||'').trim();
   data.set('details',(originalDetails?originalDetails+'\n\n':'')+'Overnight event: end time is on the following calendar day.');
  }
@@ -197,13 +203,14 @@ document.getElementById('inquiry').addEventListener('submit',async e=>{
  const price=active?pricing[currentService]??null:null;
  const savings=price===null?0:Math.max(0,(regular[currentService]??price)-price);
  const discounted=price;
+ const dueInFull=fullPaymentDue(data.get('date'));
  data.set('standard_price',price===null?'Quote required':money(regular[currentService]??price));
  data.set('estimated_discount',price===null?'Quote required':money(savings));
- data.set('promotion',active?'2026 Year-End Booking Specials — requires signed contract and 50% retainer by Dec 31, 2026':'2026 specials ended — updated quote required');
+ data.set('promotion',active?'2026 Year-End Booking Specials — requires signed contract and required payment by Dec 31, 2026':'2026 specials ended — updated quote required');
  data.set('promotion_status',active&&price!==null?'Year-end special — pending confirmation':'Quote required');
  data.set('estimated_total',discounted===null?'Custom quote':money(discounted));
- data.set('estimated_retainer',discounted===null?'50% of confirmed quote':money(discounted/2));
- data.set('estimated_balance',discounted===null?'50% of confirmed quote':money(discounted/2));
+ data.set('estimated_retainer',discounted===null?(dueInFull?'Full confirmed quote':'50% of confirmed quote'):money(dueInFull?discounted:discounted/2));
+ data.set('estimated_balance',dueInFull?money(0):discounted===null?'50% of confirmed quote':money(discounted/2));
  button.disabled=true;button.textContent='Sending inquiry…';
  note.textContent='Submitting your booking inquiry…';
  try{
@@ -230,60 +237,98 @@ modal.querySelector('.gallery-next').addEventListener('click',()=>show(active+1)
 modal.addEventListener('click',e=>{if(e.target===modal)close()});
 document.addEventListener('keydown',e=>{if(modal.hidden)return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')show(active-1);if(e.key==='ArrowRight')show(active+1)});
 })();
-</script><script>(()=>{const prices=window.YEAR_END_PRICES={ "Essential DJ": 750, "Classic DJ": 900, "Wedding Reception DJ": 1050, "The Classic Man": 1095, "Put a Little Umph in It": 1395, "Give You All of Me": 1795, "Classic Photo Booth": 400, "Celebration Photo Booth": 500, "Deluxe Photo Booth": 700};const regular=window.YEAR_END_REGULAR={"Classic Photo Booth": 500, "Celebration Photo Booth": 600, "Deluxe Photo Booth": 800};const brand=document.getElementById('brand'),service=document.getElementById('service');const money=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});const active=()=>new Date()<new Date('2027-01-01T00:00:00-06:00');function update(){const p=prices[service.value],on=active(),card=document.getElementById('launch-price-card'),promo=document.getElementById('promo-calculation'),deposit=document.getElementById('deposit-calculation');if(p===undefined||!on){card.hidden=true;promo.textContent=on?'Custom and legacy packages require a confirmed quote.':'2026 promotional rates have ended. Please request an updated quote.';deposit.textContent='Your 50% retainer will be calculated from your confirmed quote.';document.getElementById('estimated-total').value='';document.getElementById('standard-price').value='';document.getElementById('estimated-discount').value='';document.getElementById('promotion-status').value=on?'Quote required':'Promotion expired';return;}const r=regular[service.value]??p,save=Math.max(0,r-p);card.hidden=false;document.getElementById('launch-package-name').textContent=service.value;document.getElementById('launch-regular').textContent=money(r);document.getElementById('launch-savings').textContent=money(save);document.getElementById('launch-total').textContent=money(p);document.getElementById('launch-retainer').textContent=money(p/2);document.getElementById('launch-balance').textContent=money(p/2);document.getElementById('launch-terms').textContent='Signed contract and 50% non-refundable retainer must be received by December 31, 2026 to lock in this special rate. Final quote and availability must be confirmed.';promo.textContent='2026 Year-End Booking Special'+(save?' — Save '+money(save):'');deposit.textContent='Estimated total '+money(p)+' • 50% retainer '+money(p/2)+' • Remaining balance '+money(p/2);document.getElementById('estimated-total').value=money(p);document.getElementById('standard-price').value=money(r);document.getElementById('estimated-discount').value=money(save);document.getElementById('promotion-status').value='Year-end special — pending confirmation';document.getElementById('estimated-deposit').value=money(p/2);document.getElementById('estimated-balance').value=money(p/2);}brand.addEventListener('change',update);service.addEventListener('change',update);update();})();</script><script>
+</script><script>(()=>{const prices=window.YEAR_END_PRICES={ "Essential DJ": 750, "Classic DJ": 900, "Wedding Reception DJ": 1050, "The Classic Man": 1095, "Put a Little Umph in It": 1395, "Give You All of Me": 1795, "Classic Photo Booth": 400, "Celebration Photo Booth": 500, "Deluxe Photo Booth": 700};const regular=window.YEAR_END_REGULAR={"Classic Photo Booth": 500, "Celebration Photo Booth": 600, "Deluxe Photo Booth": 800};const brand=document.getElementById('brand'),service=document.getElementById('service');const money=n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});const active=()=>new Date()<new Date('2027-01-01T00:00:00-06:00');function update(){const full=fullPaymentDue(document.getElementById('event-date').value);const p=prices[service.value],on=active(),card=document.getElementById('launch-price-card'),promo=document.getElementById('promo-calculation'),deposit=document.getElementById('deposit-calculation');if(p===undefined||!on){card.hidden=true;promo.textContent=on?'Custom and legacy packages require a confirmed quote.':'2026 promotional rates have ended. Please request an updated quote.';deposit.textContent=full?'The full confirmed quote is due at booking confirmation.':'Your 50% retainer will be calculated from your confirmed quote.';document.getElementById('estimated-total').value='';document.getElementById('standard-price').value='';document.getElementById('estimated-discount').value='';document.getElementById('promotion-status').value=on?'Quote required':'Promotion expired';return;}const r=regular[service.value]??p,save=Math.max(0,r-p);card.hidden=false;document.getElementById('launch-package-name').textContent=service.value;document.getElementById('launch-regular').textContent=money(r);document.getElementById('launch-savings').textContent=money(save);document.getElementById('launch-total').textContent=money(p);document.getElementById('launch-due-label').textContent=full?'Estimated full amount due at confirmation':'Estimated 50% retainer';document.getElementById('launch-retainer').textContent=money(full?p:p/2);document.getElementById('launch-balance').textContent=money(full?0:p/2);document.getElementById('launch-terms').textContent='Signed contract and 50% non-refundable retainer must be received by December 31, 2026 to lock in this special rate. Final quote and availability must be confirmed.';promo.textContent='2026 Year-End Booking Special'+(save?' — Save '+money(save):'');deposit.textContent='Estimated total '+money(p)+(full?' • Full amount due at confirmation '+money(p):' • 50% retainer '+money(p/2))+' • Remaining balance '+money(full?0:p/2);document.getElementById('estimated-total').value=money(p);document.getElementById('standard-price').value=money(r);document.getElementById('estimated-discount').value=money(save);document.getElementById('promotion-status').value='Year-end special — pending confirmation';document.getElementById('estimated-deposit').value=money(p/2);document.getElementById('estimated-balance').value=money(p/2);}brand.addEventListener('change',update);service.addEventListener('change',update);document.getElementById('event-date').addEventListener('change',update);update();})();</script><script>
 (function(){
- const dateInput=document.querySelector('input[name="date"]');
- const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
- function dropdown(label,items){
-   const el=document.createElement('select');el.setAttribute('aria-label',label);
-   const initial=document.createElement('option');initial.value='';initial.textContent=label;el.appendChild(initial);
-   items.forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;el.appendChild(o)});
-   return el;
+ const form = document.getElementById('inquiry');
+ const endDay = document.getElementById('event-end-day');
+ const dateNote = document.getElementById('event-end-date-note');
+ let endDayChosen = false;
+
+ function parseDate(text) {
+  const value = text.trim();
+  const american = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(value);
+  const iso = american ? `${american[3]}-${american[1].padStart(2,'0')}-${american[2].padStart(2,'0')}` : value;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return '';
+  const date = new Date(iso);
+  return Number.isFinite(+date) && date.toISOString().slice(0,10) === iso ? iso : '';
  }
- function pickerHost(input){const host=document.createElement('div');host.className='mobile-picker';input.insertAdjacentElement('afterend',host);return host;}
- const dateHost=pickerHost(dateInput);
- const month=dropdown('Month',months.map((m,i)=>[String(i+1).padStart(2,'0'),m]));
- const day=dropdown('Day',Array.from({length:31},(_,i)=>[String(i+1).padStart(2,'0'),String(i+1)]));
- const currentYear=new Date().getFullYear();
- const year=dropdown('Year',Array.from({length:7},(_,i)=>[String(currentYear+i),String(currentYear+i)]));
- dateHost.append(month,day,year);
- function syncDate(){
-  const prior=day.value;
-  const count=month.value&&year.value?new Date(Number(year.value),Number(month.value),0).getDate():31;
-  Array.from(day.options).forEach(o=>{if(o.value)o.disabled=Number(o.value)>count});
-  if(Number(prior)>count)day.value='';
-  dateInput.value=month.value&&day.value&&year.value?`${year.value}-${month.value}-${day.value}`:'';
+
+ function parseTime(text) {
+  const match = /^(\d{1,2}):(\d{2})\s*(am|pm)?$/i.exec(text.trim());
+  if (!match) return '';
+  let hour = Number(match[1]);
+  if (Number(match[2]) > 59 || (match[3] ? hour < 1 || hour > 12 : hour > 23)) return '';
+  if (match[3]) hour = hour % 12 + (match[3].toLowerCase() === 'pm' ? 12 : 0);
+  return String(hour).padStart(2,'0') + ':' + match[2];
  }
- [month,day,year].forEach(x=>x.addEventListener('change',syncDate));
- const timeInputs=[...document.querySelectorAll('input[name="start_time"],input[name="end_time"],input[name="booth_start_time"],input[name="booth_end_time"]')];
- timeInputs.forEach(input=>{
-  const host=pickerHost(input);
-  const hour=dropdown('Hour',Array.from({length:12},(_,i)=>[String(i+1),String(i+1)]));
-  const minute=dropdown('Minute',Array.from({length:12},(_,i)=>[String(i*5).padStart(2,'0'),String(i*5).padStart(2,'0')]));
-  const ampm=dropdown('AM / PM',[['AM','AM'],['PM','PM']]);
-  host.append(hour,minute,ampm);
-  function sync(){
-   if(!hour.value||!minute.value||!ampm.value){input.value='';return;}
-   let h=Number(hour.value)%12;if(ampm.value==='PM')h+=12;
-   input.value=String(h).padStart(2,'0')+':'+minute.value;
+
+ function syncEndDate() {
+  const {date, start_time, end_time, end_date} = form.elements;
+  if (!endDayChosen && start_time.value && end_time.value) {
+   endDay.value = end_time.value < start_time.value ? 'next' : 'same';
   }
-  [hour,minute,ampm].forEach(el=>el.addEventListener('change',sync));
- });
- const form=document.getElementById('inquiry');
- form.addEventListener('submit',function(e){
-  const required=[['date','event date'],['start_time','event start time'],['end_time','event end time']];
-  for(const [name,label] of required){
-   if(!form.elements[name].value){e.preventDefault();e.stopImmediatePropagation();
-    document.getElementById('formnote').textContent='Please select the '+label+' using the dropdowns.';
-    const picker=form.elements[name].nextElementSibling;
-    if(picker){picker.scrollIntoView({behavior:'smooth',block:'center'});picker.querySelector('select')?.focus();}
-    return;
+  const day = new Date(date.value);
+  if (!Number.isFinite(+day)) {
+   end_date.value = '';
+   dateNote.textContent = 'Choose an event date to see the end date.';
+   return;
+  }
+  if (endDay.value === 'next') day.setUTCDate(day.getUTCDate() + 1);
+  end_date.value = day.toISOString().slice(0,10);
+  dateNote.textContent = new Intl.DateTimeFormat('en-US', {dateStyle:'long', timeZone:'UTC'}).format(day);
+ }
+
+ endDay.addEventListener('change', () => { endDayChosen = true; syncEndDate(); });
+ for (const [name, label, kind, required] of [
+  ['date','Event date','date',true],
+  ['start_time','Event start time','time',true],
+  ['end_time','Event end time','time',true],
+  ['booth_start_time','Photo booth start time','time',false],
+  ['booth_end_time','Photo booth end time','time',false]
+ ]) {
+  const hidden = form.elements.namedItem(name);
+  const isDate = kind === 'date';
+  const typed = document.createElement('input');
+  typed.type = 'text';
+  typed.placeholder = isDate ? 'MM/DD/YYYY' : '6:30 PM';
+  typed.setAttribute('aria-label', label + ' (type)');
+  const picker = document.createElement('input');
+  picker.type = kind;
+  picker.setAttribute('aria-label', label + ' picker');
+  if (isDate) picker.min = houstonToday();
+  const host = document.createElement('span');
+  host.className = 'mobile-picker';
+  host.append(typed, picker);
+  hidden.after(host);
+  function sync() {
+   typed.disabled = picker.disabled = hidden.disabled;
+   hidden.value = isDate ? parseDate(typed.value) : parseTime(typed.value);
+   picker.value = hidden.value;
+   const enabled = !hidden.disabled;
+   typed.setCustomValidity(enabled && (typed.value.trim() || required) && !hidden.value
+    ? (isDate ? 'Enter a valid date in MM/DD/YYYY format.' : 'Enter a time such as 6:30 PM.')
+    : enabled && isDate && hidden.value < houstonToday() ? 'Choose today or a future date.' : '');
+   syncEndDate();
+   if (isDate) hidden.dispatchEvent(new Event('change'));
+  }
+  brand.addEventListener('change', sync);
+  service.addEventListener('change', sync);
+  typed.disabled = picker.disabled = hidden.disabled;
+  typed.addEventListener('input', sync);
+  picker.addEventListener('change', () => {
+   const value = picker.value;
+   typed.value = isDate && value ? value.slice(5).replace('-', '/') + '/' + value.slice(0,4) : value;
+   sync();
+  });
+  form.addEventListener('submit', event => {
+   sync();
+   if (!typed.reportValidity()) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
    }
-  }
-  const selectedDate=form.elements['date'].value;
-  const today=new Date();const todayISO=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
-  if(selectedDate<todayISO){e.preventDefault();e.stopImmediatePropagation();document.getElementById('formnote').textContent='Please choose today or a future event date.';dateHost.scrollIntoView({behavior:'smooth',block:'center'});}
- },true);
+  }, true);
+ }
+ syncEndDate();
 })();
 </script><script>(function(){
 const select=document.getElementById('addon-choice'),add=document.getElementById('addon-add'),list=document.getElementById('addon-items'),hidden=document.getElementById('addons-requested');
